@@ -1,0 +1,20 @@
+{
+  "version": "v2",
+  "encoder": "efficientnet-b3",
+  "img_size": 256,
+  "threshold": 0.275,
+  "recall_floor": 0.92,
+  "best_dice": 0.9080858945846557,
+  "test_dice": 0.9119205457823617,
+  "tta_dice": 0.9092401351247515,
+  "test_recall": 0.906149855681828,
+  "tta_recall": 0.9287469370024545,
+  "tta_type": "4-flip",
+  "changes_from_v1": [
+    "stronger augmentation (rotate=45, CLAHE, ColorJitter)",
+    "OneCycleLR with warmup",
+    "recall-biased threshold",
+    "4-flip TTA",
+    "robust ROI extraction"
+  ]
+}

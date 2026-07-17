@@ -1,0 +1,105 @@
+intents:
+  overview:
+    keywords:
+      - biết thêm
+      - thông tin
+      - tổng quan
+      - giới thiệu
+      - là gì
+    preferred_chunk_types:
+      - summary
+      - common_signs
+      - common_symptoms
+      - diagnosis_note
+
+  symptoms:
+    keywords:
+      - triệu chứng
+      - dấu hiệu
+      - biểu hiện
+      - nhận biết
+    preferred_chunk_types:
+      - common_signs
+      - common_symptoms
+      - red_flags
+
+  contagious:
+    keywords:
+      - lây
+      - truyền nhiễm
+      - lây không
+      - dùng chung
+    preferred_chunk_types:
+      - contagious
+
+  self_care:
+    keywords:
+      - chăm sóc
+      - tại nhà
+      - nên làm gì
+      - xử lý
+      - vệ sinh
+    preferred_chunk_types:
+      - self_care
+      - avoid
+
+  doctor:
+    keywords:
+      - đi khám
+      - bác sĩ
+      - khi nào khám
+      - khi nào nên
+      - nguy hiểm
+      - cảnh báo
+      - chảy máu
+      - loét
+    preferred_chunk_types:
+      - when_to_see_doctor
+      - red_flags
+      - red_flag_questions
+
+  severity:
+    keywords:
+      - nặng
+      - mức độ
+      - nguy hiểm
+      - có nặng không
+      - có nguy hiểm không
+      - lưu ý
+      - cần lưu ý
+      - chú ý
+      - cần chú ý
+    preferred_chunk_types:
+      - red_flags
+      - when_to_see_doctor
+      - common_signs
+
+  sources:
+    keywords:
+      - nguồn
+      - nguồn tham khảo
+      - source
+      - url
+      - link
+      - tài liệu
+    preferred_chunk_types:
+      - sources
+
+  differential:
+    keywords:
+      - phân biệt
+      - giống bệnh
+      - giống với
+      - nhầm với
+    preferred_chunk_types:
+      - differential_diagnosis
+
+  follow_up:
+    keywords:
+      - hỏi gì
+      - cần hỏi
+      - thông tin bổ sung
+    preferred_chunk_types:
+      - ask_user_questions
+
+default_intent: overview

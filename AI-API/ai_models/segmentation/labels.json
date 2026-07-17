@@ -1,0 +1,9 @@
+{
+  "task": "binary_segmentation",
+  "labels": {
+    "0": "background",
+    "1": "lesion"
+  },
+  "description": "Binary skin lesion segmentation for ISIC 2018 dataset",
+  "downstream_usage": "ROI extraction for EfficientNet skin disease classification"
+}

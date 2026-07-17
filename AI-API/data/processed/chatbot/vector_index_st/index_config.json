@@ -1,0 +1,9 @@
+{
+  "provider": "sentence-transformers",
+  "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "dimension": 384,
+  "metric": "cosine",
+  "normalized": true,
+  "chunks_file": "chunks.jsonl",
+  "embeddings_file": "embeddings.npy"
+}

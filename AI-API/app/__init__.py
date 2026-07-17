@@ -1,0 +1,1 @@
+# SkinDiseases AI Service

@@ -1,0 +1,54 @@
+## Kết quả AI từ ảnh
+
+- Ảnh hợp lệ: {{ image_valid }}
+- Độ tin cậy kiểm tra ảnh da: {{ validation_confidence }}
+- Top-k bệnh AI gợi ý:
+{% for item in classification_topk %}
+  - {{ item.label }}: {{ item.confidence }}
+{% else %}
+  - Không có nhãn phân loại hợp lệ.
+{% endfor %}
+- Tỷ lệ vùng tổn thương: {{ lesion_area_percent }}
+- Tóm tắt nguy cơ: {{ risk_summary }}
+
+## Thông tin người dùng
+
+- Tuổi: {{ user_profile.age }}
+- Giới tính: {{ user_profile.gender }}
+- Vị trí tổn thương: {{ user_symptoms.body_site }}
+- Thời gian xuất hiện: {{ user_symptoms.duration }}
+- Ngứa: {{ user_symptoms.itch }}
+- Đau: {{ user_symptoms.hurt }}
+- Chảy máu: {{ user_symptoms.bleed }}
+- Loét: {{ user_symptoms.ulcerated }}
+- Thay đổi màu/kích thước/hình dạng: {{ user_symptoms.changed }}
+- Lớn nhanh: {{ user_symptoms.grew }}
+- Tiền sử ung thư da: {{ user_symptoms.skin_cancer_history }}
+
+## Thông tin còn thiếu cần hỏi thêm
+
+{% for question in missing_questions %}
+- {{ question }}
+{% else %}
+- Không ghi nhận câu hỏi bắt buộc còn thiếu.
+{% endfor %}
+
+## UNTRUSTED_RAG_CONTEXT
+
+{{ rag_context }}
+
+## Câu hỏi người dùng
+
+{{ user_message }}
+
+## Yêu cầu trả lời
+
+- Nếu người dùng hỏi thông tin chung, trả lời theo hướng tổng quan, dấu hiệu cần chú ý và nên làm gì tiếp theo.
+- Nếu người dùng hỏi triệu chứng, tập trung vào dấu hiệu/triệu chứng từ context.
+- Nếu người dùng hỏi chăm sóc tại nhà, chỉ đưa hướng dẫn an toàn, không kê đơn thuốc.
+- Nếu người dùng hỏi có lây không, trả lời rõ theo context.
+- Nếu người dùng hỏi khi nào đi khám, ưu tiên red flags và triage.
+- Nếu top-k AI có nhiều bệnh gần nhau, nói rõ các bệnh da có thể giống nhau trên ảnh và cần đánh giá trực tiếp để phân biệt.
+- Không dùng Markdown heading như #, ##, ### hoặc in đậm bằng **...**.
+- Trả lời thành 2-5 đoạn ngắn hoặc gạch đầu dòng thường, mỗi ý phải là câu hoàn chỉnh.
+- Không kết thúc bằng tiêu đề dang dở như "Hướng dẫn", "Dấu hiệu", "Điều trị".

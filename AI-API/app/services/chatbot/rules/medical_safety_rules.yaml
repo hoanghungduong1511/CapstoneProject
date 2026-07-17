@@ -1,0 +1,31 @@
+high_risk_labels:
+  - MELANOMA
+  - BCC
+  - SCC
+  - AK
+
+urgent_terms:
+  - khó thở
+  - ngất
+  - phù môi
+  - phù lưỡi
+  - chảy máu không cầm
+  - đau dữ dội
+  - hoại tử
+  - lan toàn thân
+
+red_flag_symptoms:
+  - bleed
+  - ulcerated
+  - changed
+  - grew
+  - hurt
+
+blocked_claims:
+  - bạn chắc chắn bị
+  - tôi chẩn đoán
+  - không cần đi khám
+  - kết quả AI xác nhận
+
+disclaimer: Thông tin chỉ mang tính tham khảo, không thay thế bác sĩ.
+

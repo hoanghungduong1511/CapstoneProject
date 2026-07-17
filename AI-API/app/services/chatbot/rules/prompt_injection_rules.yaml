@@ -1,0 +1,11 @@
+patterns:
+  - bỏ qua hướng dẫn
+  - ignore previous
+  - system prompt
+  - tiết lộ prompt
+  - developer message
+  - api key
+  - khóa api
+
+safe_response: Tôi không thể bỏ qua hướng dẫn an toàn hoặc tiết lộ cấu hình hệ thống. Tôi có thể tiếp tục hỗ trợ bạn với thông tin da liễu mang tính tham khảo.
+

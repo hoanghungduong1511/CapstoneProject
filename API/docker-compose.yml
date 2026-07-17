@@ -1,0 +1,127 @@
+services:
+  # ── PostgreSQL Database ────────────────────────────────────────────
+  db:
+    image: pgvector/pgvector:pg18
+    container_name: skin_diseases_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-skin_diseases}
+    ports:
+      - "5433:5432"  # 5433 bên ngoài để tránh conflict với PG local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-skin_diseases}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI Application ────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skin_diseases_api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Override host để container connect tới service "db", không phải localhost
+      POSTGRES_HOST: db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    volumes:
+      - .:/app # Hot-reload trong dev
+    # Dev mode: dùng entrypoint + reload flag
+    command: [ "--reload" ]
+
+  # AI inference service: validation -> segmentation -> classification
+  ai-service:
+    build:
+      context: ../../SkinDeseases-AI-API
+      dockerfile: Dockerfile
+    container_name: skin_diseases_ai_service
+    restart: unless-stopped
+    environment:
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
+      GEMINI_TIMEOUT_SECONDS: ${GEMINI_TIMEOUT_SECONDS:-120}
+      RAG_MODE: ${RAG_MODE:-pgvector}
+      RAG_TOP_K: ${RAG_TOP_K:-5}
+      RAG_MIN_SCORE: ${RAG_MIN_SCORE:-0.05}
+      VECTOR_INDEX_DIR: ${VECTOR_INDEX_DIR:-/app/data/processed/chatbot/vector_index_st}
+      CHATBOT_TEMPERATURE: ${CHATBOT_TEMPERATURE:-0.3}
+      CHATBOT_MAX_TOKENS: ${CHATBOT_MAX_TOKENS:-800}
+      VECTOR_DB_ENABLED: ${VECTOR_DB_ENABLED:-false}
+      PGVECTOR_DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-skin_diseases}
+      PGVECTOR_TABLE: ${PGVECTOR_TABLE:-disease_knowledge_chunks}
+      PGVECTOR_EMBEDDING_PROVIDER: ${PGVECTOR_EMBEDDING_PROVIDER:-sentence-transformers}
+      PGVECTOR_EMBEDDING_MODEL: ${PGVECTOR_EMBEDDING_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
+    ports:
+      - "8001:8001"
+
+  # ── pgAdmin (Quản lý DB qua giao diện web) ────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: skin_diseases_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+  # ── MinIO (Object Storage cho ảnh) ─────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: skin_diseases_minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"   # API endpoint
+      - "9001:9001"   # Console UI
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── MinIO Init: tự động tạo bucket khi khởi động ──────────────────
+  minio-create-bucket:
+    image: minio/mc:latest
+    container_name: skin_diseases_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set myminio http://minio:9000 $${MINIO_ACCESS_KEY:-minioadmin} $${MINIO_SECRET_KEY:-minioadmin};
+      mc mb myminio/$${MINIO_BUCKET_NAME:-skin-diseases-images} --ignore-existing;
+      mc anonymous set download myminio/$${MINIO_BUCKET_NAME:-skin-diseases-images};
+      echo 'Bucket ready ✅';
+      "
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-skin-diseases-images}
+
+volumes:
+  postgres_data:
+  minio_data:

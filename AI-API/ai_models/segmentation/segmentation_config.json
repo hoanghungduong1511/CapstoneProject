@@ -1,0 +1,67 @@
+{
+  "version": "v2",
+  "model_file": "segmentation_model_v3.pth",
+  "weights_file": "best_model_v3.pth",
+  "architecture": "Unet",
+  "encoder": "efficientnet-b3",
+  "encoder_weights": "imagenet",
+  "in_channels": 3,
+  "classes": 1,
+  "activation": null,
+
+  "image_size": 256,
+  "input_format": "RGB",
+  "normalize_mean": [0.485, 0.456, 0.406],
+  "normalize_std": [0.229, 0.224, 0.225],
+  "resize_interpolation": "bilinear",
+
+  "threshold": 0.45,
+  "output_activation": "sigmoid",
+  "output_channels": 1,
+  "output_size": [256, 256],
+
+  "tta_enabled": true,
+  "tta_type": "4-flip",
+  "tta_transforms": ["original", "hflip", "vflip", "hflip+vflip"],
+
+  "postprocess": {
+    "min_area_ratio": 0.001,
+    "morphology_kernel_size": 5,
+    "morphology_kernel_shape": "ellipse",
+    "operations": ["connected_components", "morphology_close", "morphology_open"]
+  },
+
+  "roi_extraction": {
+    "padding_ratio": 0.15,
+    "min_roi_ratio": 0.3,
+    "min_mask_area_ratio": 0.005,
+    "fallback": "full_image"
+  },
+
+  "training_info": {
+    "dataset": "ISIC 2018",
+    "train_samples": 2585,
+    "val_samples": 554,
+    "test_samples": 555,
+    "best_epoch": 26,
+    "total_epochs": 41,
+    "loss": "0.7*DiceLoss + 0.3*BCEWithLogitsLoss",
+    "optimizer": "AdamW",
+    "scheduler": "OneCycleLR",
+    "max_lr": 0.0003,
+    "batch_size": 16,
+    "augmentation": "V2 (rotate=45, CLAHE, ColorJitter, MotionBlur)"
+  },
+
+  "metrics": {
+    "val_dice": 0.9069,
+    "test_dice": 0.9103,
+    "test_iou": 0.8416,
+    "test_precision": 0.9242,
+    "test_recall": 0.9052,
+    "tta_dice": 0.9128,
+    "tta_recall": 0.9091
+  },
+
+  "notes": "Threshold is recall-biased (floor=0.92). TTA improves recall at slight dice cost. For downstream classification, use TTA + recall-biased threshold."
+}
