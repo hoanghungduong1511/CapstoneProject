@@ -422,8 +422,8 @@ This project demonstrates practical experience across AI engineering, backend de
 ## About Me
 
 **Author:** Duong Vo Hoang Hung  
-**Email:** `your-email@example.com`  
-**LinkedIn:** `https://www.linkedin.com/in/your-linkedin`  
+**Email:** `hoanghungduong1511@gmail.com`  
+**Phone number:** `0395753159`  
 **GitHub:** [hoanghungduong1511](https://github.com/hoanghungduong1511)
 
 ---
