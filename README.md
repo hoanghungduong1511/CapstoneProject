@@ -56,6 +56,7 @@ The project combines Computer Vision, backend engineering, and Retrieval-Augment
 > Medical disclaimer: this system is designed to support preliminary screening and education. It does not replace professional medical diagnosis, treatment, or consultation with a qualified dermatologist.
 ## Report
 Report: https://drive.google.com/file/d/1RfzqY--4Z92TXU-_jcgK5YTYJCLH_0Xc/view?usp=sharing
+
 Slide: https://docs.google.com/presentation/d/1LoJDIgxM3rpy1jd3nW5fRnQMvmMHuLq5/edit?usp=sharing&ouid=106166603005934668892&rtpof=true&sd=true
 ## System Features
 
